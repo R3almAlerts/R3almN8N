@@ -1,5 +1,5 @@
 import { useState, Suspense } from 'react';
-import { useWorkflow } from './hooks/useWorkflow';
+import useWorkflow from './hooks/useWorkflow'; // Default import (no { })
 import type { MenuItem } from './types/menu';
 import NavMenu from './components/NavMenu';
 import { Plus, Play, Home, Settings, FileText, Workflow as EditorIcon } from 'lucide-react';
@@ -13,7 +13,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'creator' | 'editor'>('creator');
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
-  const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow();
+  const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow(); // Default usage
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleSearch = (query: string) => {
@@ -36,7 +36,6 @@ function App() {
   };
 
   const handleSaveFromEditor = (updated: Workflow) => {
-    // Stub: Update via API/hook (expand to put /workflows/:id)
     console.log('Saved updated workflow:', updated);
     setSelectedWorkflow(updated);
   };
@@ -45,7 +44,6 @@ function App() {
     executeWorkflow(id, { sample: 'input' });
   };
 
-  // Sample menu data
   const menuItems: MenuItem[] = [
     { label: 'Home', href: '/', icon: Home },
     {
