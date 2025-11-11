@@ -226,25 +226,27 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ isCollapsed, onCollapse }) =>
         </div>
       </nav>
 
-      {/* User Profile */}
+ {/* User Profile + Logout */}
       {!isCollapsed && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="p-6 border-t border-white/10"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 border-t border-white/10">
           <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer group">
             <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">Sarah Chen</p>
-              <p className="text-xs text-gray-400 truncate">sarah@nexuspro.com</p>
+              <p className="text-sm font-semibold text-white truncate">{user?.email || 'User'}</p>
+              <p className="text-xs text-gray-400 truncate">Premium</p>
             </div>
-            <Settings className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
+            <button
+              onClick={logout}
+              className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </motion.div>
       )}
