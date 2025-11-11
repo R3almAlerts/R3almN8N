@@ -1,8 +1,9 @@
-import type { LucideProps } from 'lucide-react'; // Type-only for props (strips to JS)
+// src/types/menu.ts
+import type { LucideProps } from 'lucide-react';
 
 export interface MenuItem {
   label: string;
   href?: string;
-  icon?: React.ComponentType<LucideProps>; // Typed as icon component (e.g., Home from lucide-react)
+  icon?: React.ComponentType<LucideProps>; // ← Correct type
   children?: MenuItem[];
 }
