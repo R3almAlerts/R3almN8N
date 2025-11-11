@@ -27,4 +27,9 @@
     "postcss": "^8.4.47",
     "autoprefixer": "^10.4.20"
   }
+
+  "dependencies": {
+  // ... existing
+  "lucide-react": "^0.441.0" // Already there
+  }
 }

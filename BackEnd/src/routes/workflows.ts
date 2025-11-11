@@ -27,4 +27,9 @@ router.post('/:id/execute', async (req, res) => {
   }
 });
 
+export async function getWorkflowsCount(): Promise<{ total: number }> {
+  const { count, error } = await supabase.from('workflows').select('*', { count: 'exact', head: true });
+  if (error) throw error;
+  return { total: count || 0 };
+}
 export default router;
