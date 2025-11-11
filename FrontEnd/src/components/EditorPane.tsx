@@ -1,43 +1,37 @@
 import React, { memo, useCallback } from 'react';
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, useReactFlow, BackgroundVariant } from '@xyflow/react';
-import '@xyflow/react/dist/style.css'; // Core styles
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, BackgroundVariant } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { motion } from 'framer-motion';
-import Sidebar from './Sidebar'; // Node palette
-import type { Workflow, WorkflowNode } from '../types'; // Types
-import CustomNodes from './NodeTypes'; // Custom renders
+import Sidebar from './Sidebar';
+import { CustomNodes } from './NodeTypes';
+import type { Workflow } from '../types';
 
-interface EditorPaneProps {
+interface Props {
   workflow: Workflow;
-  onSave: (updated: Workflow) => void;
+  onSave: (w: Workflow) => void;
   onTest: (id: string) => void;
 }
 
-const EditorPane: React.FC<EditorPaneProps> = memo(({ workflow, onSave, onTest }) => {
-  const reactFlowInstance = useReactFlow();
-  const [nodes, , onNodesChange] = useNodesState(workflow.nodes.map(node => ({ ...node, type: node.type, data: { ...node.data, label: node.name }, position: node.position || { x: 0, y: 0 } }))); // Default position, use WorkflowNode
-  const [edges, , onEdgesChange] = useEdgesState(workflow.connections.map(conn => ({ id: `${conn.from}-${conn.to}`, source: conn.from, target: conn.to })));
-
-  const onConnect = useCallback((params: any) => {
-    // Stub: setEdges((eds) => addEdge(params, eds)); // Add if needed
-  }, []);
+const EditorPane: React.FC<Props> = memo(({ workflow, onSave, onTest }) => {
+  const [nodes, , onNodesChange] = useNodesState(
+    workflow.nodes.map((n) => ({ ...n, type: n.type, data: { label: n.name, ...n.data }, position: n.position ?? { x: 0, y: 0 } }))
+  );
+  const [edges, , onEdgesChange] = useEdgesState(
+    workflow.connections.map((c) => ({ id: `${c.from}-${c.to}`, source: c.from, target: c.to }))
+  );
 
   const onSaveWorkflow = useCallback(() => {
     const updated: Workflow = {
       ...workflow,
-      nodes, // Typed as Node[], but map back to WorkflowNode if needed
-      connections: edges.map(edge => ({ from: edge.source, to: edge.target })),
+      nodes: nodes as any,
+      connections: edges.map((e) => ({ from: e.source, to: e.target })),
     };
     onSave(updated);
   }, [workflow, nodes, edges, onSave]);
 
-  const onNodeClick = useCallback((_: any, node: any) => { // Unused event, typed as any for stub
-    console.log('Selected node:', node); // Debug: Step-through stub
-    onTest(workflow.id); // Trigger execute on click (expand to partial run)
-  }, [workflow.id, onTest]);
-
-  const handleDragStart = useCallback((event: React.DragEvent, nodeType: WorkflowNode['type']) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
+  const handleDragStart = useCallback((e: React.DragEvent, type: any) => {
+    e.dataTransfer.setData('application/reactflow', type);
+    e.dataTransfer.effectAllowed = 'move';
   }, []);
 
   return (
@@ -49,20 +43,17 @@ const EditorPane: React.FC<EditorPaneProps> = memo(({ workflow, onSave, onTest }
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
           nodeTypes={CustomNodes}
           fitView
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-inner"
         >
-          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          <Background variant={BackgroundVariant.Dots} gap={12} />
           <Controls />
           <MiniMap />
         </ReactFlow>
         <motion.button
           whileHover={{ scale: 1.05 }}
           onClick={onSaveWorkflow}
-          className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded"
         >
           Save Workflow
         </motion.button>
@@ -72,5 +63,4 @@ const EditorPane: React.FC<EditorPaneProps> = memo(({ workflow, onSave, onTest }
 });
 
 EditorPane.displayName = 'EditorPane';
-
 export default EditorPane;
