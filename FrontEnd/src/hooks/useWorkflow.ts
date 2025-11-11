@@ -1,17 +1,37 @@
 import { useState, useCallback } from 'react';
 
-/**
- * Custom hook for workflow CRUD/execution.
- * @returns {Object} workflows array, loading state, create/execute functions.
- */
+// Inline types to avoid bundling issues (sync'd with ../types/index.ts)
+interface WorkflowNode {
+  id: string;
+  type: 'trigger' | 'action' | 'logic' | 'ai' | 'web3';
+  name: string;
+  position?: { x: number; y: number };
+  data: Record<string, any>;
+  outputs?: string[];
+}
+
+interface Workflow {
+  id: string;
+  name: string;
+  nodes: WorkflowNode[];
+  connections: { from: string; to: string }[];
+  active: boolean;
+}
+
+interface ExecutionContext {
+  input: Record<string, any>;
+  output: Record<string, any>;
+  error?: string;
+}
+
 export const useWorkflow = () => {
-  const [workflows, setWorkflows] = useState<any[]>([]);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [loading, setLoading] = useState(false);
 
   const createWorkflow = useCallback(async (name: string) => {
     setLoading(true);
     try {
-      const newWorkflow = {
+      const newWorkflow: Workflow = {
         id: crypto.randomUUID(),
         name,
         nodes: [],
@@ -31,7 +51,7 @@ export const useWorkflow = () => {
       return saved;
     } catch (err) {
       console.error('Create workflow failed:', err);
-      throw err; // Re-throw for UI handling (e.g., toast)
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -48,7 +68,7 @@ export const useWorkflow = () => {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      return await response.json();
+      return await response.json() as ExecutionContext;
     } catch (err) {
       console.error('Execute workflow failed:', err);
       throw err;

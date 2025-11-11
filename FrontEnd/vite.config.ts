@@ -1,16 +1,16 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import checker from 'vite-plugin-checker'; // New: TS/ESLint checker
+import checker from 'vite-plugin-checker';
 
 export default defineConfig({
   plugins: [
     react(),
     checker({
-      typescript: true, // TS type-checking
+      typescript: true,
       eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}"', // Custom ESLint for src only
+        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
       },
-      overlay: true, // Browser overlay for errors (dev only)
+      overlay: true,
     }),
   ],
   server: {
@@ -21,5 +21,11 @@ export default defineConfig({
       },
     },
   },
-  base: process.env.VITE_APP_BASE_URL ? new URL('/', process.env.VITE_APP_BASE_URL).pathname : '/', // Handles /aiflow/ if needed
+  base: process.env.VITE_APP_BASE_URL ? new URL('/', process.env.VITE_APP_BASE_URL).pathname : '/',
+  build: {
+    lib: {
+      entry: 'src/main.tsx',
+      formats: ['es'], // ESM for clean exports (no strict mode clash)
+    },
+  },
 });
