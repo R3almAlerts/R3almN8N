@@ -1,45 +1,46 @@
-/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Inter font (Google CDN) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
-  }
+/* CSS Variables for dark mode */
+:root {
+  --background: 31 14% 8%;   /* gray-900 */
+  --foreground: 0 0% 98%;    /* white */
+  --border: 0 0% 20%;        /* gray-800 */
 }
 
+.dark {
+  --background: 31 14% 8%;
+  --foreground: 0 0% 98%;
+  --border: 0 0% 20%;
+}
+
+/* Glassmorphism utility */
 @layer components {
   .glass {
     @apply bg-white/10 backdrop-blur-xl border border-white/20;
   }
-  
+
   .gradient-text {
-    @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-400 via-secondary-400 to-pink-400 bg-clip-text text-transparent;
   }
 }
 
-/* Custom scrollbar for webkit browsers */
+/* Custom scrollbar */
 *::-webkit-scrollbar {
   width: 6px;
 }
-
 *::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
-
 *::-webkit-scrollbar-thumb {
   @apply bg-white/20 rounded-full hover:bg-white/30 transition-colors;
 }
 
-/* Smooth scrolling */
+/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
