@@ -14,7 +14,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<'creator' | 'editor'>('creator');
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow();
-  const [selectedId, setSelectedId] = useState<string | null>(null); // Retained for future use (e.g., run button disable)
+  const [selectedId, setSelectedId] = useState<string | null>(null); // Used in disable logic (e.g., run button)
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -101,7 +101,8 @@ function App() {
                             </button>
                             <button
                               onClick={() => executeWorkflow(wf.id, { sample: 'input' })}
-                              className="flex items-center space-x-1 text-green-600 hover:underline"
+                              disabled={!selectedId || selectedId !== wf.id || loading} // Use selectedId
+                              className="flex items-center space-x-1 text-green-600 hover:underline disabled:opacity-50"
                             >
                               <Play size={16} />
                               <span>Run</span>
