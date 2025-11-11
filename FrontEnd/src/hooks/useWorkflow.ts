@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Workflow, ExecutionContext } from '../types/index'; // Type-only import (strips to JS runtime)
+import type { Workflow, ExecutionContext } from '../types/index'; // Type-only (strips to JS)
 
 export const useWorkflow = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
@@ -20,7 +20,9 @@ export const useWorkflow = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newWorkflow),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
       const saved = await response.json();
       setWorkflows((prev) => [...prev, saved]);
       return saved;
@@ -40,7 +42,9 @@ export const useWorkflow = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input }),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json() as ExecutionContext;
     } catch (err) {
       console.error('Execute workflow failed:', err);

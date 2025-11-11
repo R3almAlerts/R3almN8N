@@ -1,5 +1,28 @@
 import { useState, useCallback } from 'react';
-import type { Workflow, ExecutionContext } from '../types/index'; // Type-only, no .ts
+
+// Inline types to avoid bundling issues (sync'd with ../types/index.ts)
+interface WorkflowNode {
+  id: string;
+  type: 'trigger' | 'action' | 'logic' | 'ai' | 'web3';
+  name: string;
+  position?: { x: number; y: number };
+  data: Record<string, any>;
+  outputs?: string[];
+}
+
+interface Workflow {
+  id: string;
+  name: string;
+  nodes: WorkflowNode[];
+  connections: { from: string; to: string }[];
+  active: boolean;
+}
+
+interface ExecutionContext {
+  input: Record<string, any>;
+  output: Record<string, any>;
+  error?: string;
+}
 
 export const useWorkflow = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
@@ -20,7 +43,9 @@ export const useWorkflow = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newWorkflow),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
       const saved = await response.json();
       setWorkflows((prev) => [...prev, saved]);
       return saved;
@@ -40,7 +65,9 @@ export const useWorkflow = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input }),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json() as ExecutionContext;
     } catch (err) {
       console.error('Execute workflow failed:', err);
