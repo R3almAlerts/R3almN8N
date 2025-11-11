@@ -1,4 +1,3 @@
-// src/types/menu.ts
 import type { LucideProps } from 'lucide-react';
 
 export interface MenuItem {

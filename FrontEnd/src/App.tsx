@@ -1,8 +1,15 @@
 import { useState, Suspense } from 'react';
-import useWorkflow from './hooks/useWorkflow';
-import type { MenuItem } from './types/menu';
-import NavMenu from './components/NavMenu';
-import { Plus, Play, Home, Settings, FileText, Workflow as EditorIcon } from 'lucide-react';
+import useWorkflow from './hooks/useWorkflow';               // <-- .tsx removed
+import type { MenuItem } from './types/menu';                // <-- type-only import
+import NavMenu from './components/NavMenu';                 // <-- .tsx removed
+import {
+  Plus,
+  Play,
+  Home,
+  Settings,
+  FileText,
+  Workflow as EditorIcon,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import SearchSkeleton from './components/SearchSkeleton';
 import type { Workflow } from './types';
@@ -16,19 +23,16 @@ function App() {
   const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+  const handleSearch = (query: string) => setSearchQuery(query);
 
   const handleCreate = async () => {
-    if (name.trim()) {
-      const newWf = await createWorkflow(name.trim());
-      if (newWf) {
-        setSelectedWorkflow(newWf);
-        setSelectedId(newWf.id);
-        setActiveTab('editor');
-        setName('');
-      }
+    if (!name.trim()) return;
+    const newWf = await createWorkflow(name.trim());
+    if (newWf) {
+      setSelectedWorkflow(newWf);
+      setSelectedId(newWf.id);
+      setActiveTab('editor');
+      setName('');
     }
   };
 
@@ -72,7 +76,8 @@ function App() {
           animate={{ opacity: 1 }}
           className="max-w-7xl mx-auto p-8"
         >
-          {activeTab === 'creator' ? (
+          {/* ---------- Creator Tab ---------- */}
+          {activeTab === 'creator' && (
             <>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Create Workflow</h2>
@@ -81,7 +86,7 @@ function App() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter workflow name..."
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md mb-4 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md mb-4 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={handleCreate}
@@ -89,7 +94,7 @@ function App() {
                   className="flex items-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
                 >
                   <Plus size={20} />
-                  <span>Create & Edit</span>
+                  <span>Create &amp; Edit</span>
                 </button>
               </div>
 
@@ -129,14 +134,15 @@ function App() {
                 </div>
               )}
             </>
-          ) : (
-            selectedWorkflow && (
-              <EditorPane
-                workflow={selectedWorkflow}
-                onSave={handleSaveFromEditor}
-                onTest={handleTestFromEditor}
-              />
-            )
+          )}
+
+          {/* ---------- Editor Tab ---------- */}
+          {activeTab === 'editor' && selectedWorkflow && (
+            <EditorPane
+              workflow={selectedWorkflow}
+              onSave={handleSaveFromEditor}
+              onTest={handleTestFromEditor}
+            />
           )}
 
           {activeTab === 'editor' && (

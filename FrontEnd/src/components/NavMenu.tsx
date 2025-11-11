@@ -16,24 +16,20 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
   const { isOpen, toggleMenu, closeMenu } = useNavMenu();
   const navRef = useRef<HTMLElement>(null);
 
-  // Close menu when clicking outside
+  // close on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        closeMenu();
-      }
+    const handler = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) closeMenu();
     };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    if (isOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, [isOpen, closeMenu]);
 
-  // Focus first link on mobile open
+  // focus first link when mobile menu opens
   useEffect(() => {
     if (isOpen && navRef.current) {
-      const firstLink = navRef.current.querySelector('a');
-      (firstLink as HTMLElement)?.focus();
+      const first = navRef.current.querySelector('a');
+      (first as HTMLElement)?.focus();
     }
   }, [isOpen]);
 
@@ -44,7 +40,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
       aria-label="Main navigation"
       className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50"
     >
-      {/* Desktop: Horizontal Mega Menu */}
+      {/* ---------- Desktop ---------- */}
       <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
         <div className="flex items-center space-x-8">
           {items.map((item) => (
@@ -56,7 +52,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
               >
                 {item.icon && <item.icon size={20} />}
                 <span className="font-medium">{item.label}</span>
-                {item.children && <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />}
+                {item.children && (
+                  <ChevronDown
+                    size={16}
+                    className="transition-transform group-hover:rotate-180"
+                  />
+                )}
               </button>
 
               <AnimatePresence>
@@ -85,8 +86,8 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
           ))}
         </div>
 
+        {/* Search + User */}
         <div className="flex items-center space-x-4">
-          {/* Search */}
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -101,7 +102,6 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
             )}
           </div>
 
-          {/* User Avatar */}
           {user && (
             <div className="relative group">
               <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1">
@@ -137,7 +137,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
         </div>
       </div>
 
-      {/* Mobile: Hamburger + Search + User */}
+      {/* ---------- Mobile ---------- */}
       <div className="md:hidden flex items-center justify-between px-4 py-3">
         <button
           onClick={toggleMenu}
@@ -172,7 +172,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
         )}
       </div>
 
-      {/* Mobile: Slide-Down Menu */}
+      {/* Mobile slide-down */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -188,7 +188,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
                     <summary className="flex items-center space-x-2 p-4 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700">
                       {item.icon && <item.icon size={20} />}
                       <span className="font-medium">{item.label}</span>
-                      {item.children && <ChevronDown size={16} className="ml-auto transition-transform group-open:rotate-180" />}
+                      {item.children && (
+                        <ChevronDown
+                          size={16}
+                          className="ml-auto transition-transform group-open:rotate-180"
+                        />
+                      )}
                     </summary>
                     {item.children && (
                       <ul className="ml-10 space-y-1 pb-2">
@@ -213,4 +218,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
         )}
       </AnimatePresence>
     </nav>
- 
+  );
+};
+
+export default NavMenu;
