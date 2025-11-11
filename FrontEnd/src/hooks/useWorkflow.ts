@@ -1,14 +1,17 @@
 import { useState, useCallback } from 'react';
-import type { Workflow, ExecutionContext } from '../types/index'; // Type-only (strips to JS)
 
+/**
+ * Custom hook for workflow CRUD/execution.
+ * @returns {Object} workflows array, loading state, create/execute functions.
+ */
 export const useWorkflow = () => {
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [workflows, setWorkflows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const createWorkflow = useCallback(async (name: string) => {
     setLoading(true);
     try {
-      const newWorkflow: Workflow = {
+      const newWorkflow = {
         id: crypto.randomUUID(),
         name,
         nodes: [],
@@ -45,7 +48,7 @@ export const useWorkflow = () => {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      return await response.json() as ExecutionContext;
+      return await response.json();
     } catch (err) {
       console.error('Execute workflow failed:', err);
       throw err;
