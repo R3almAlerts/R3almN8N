@@ -1,130 +1,48 @@
 // src/App.tsx
-import React from 'react';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SidebarMenu from './components/SidebarMenu';
-import { Package, TrendingUp, Users, Settings } from 'lucide-react';
+import Home from './pages/Home';
+import About from './pages/About';
+import NotFound from './pages/NotFound';
 import clsx from 'clsx';
 
 function App() {
-  // SidebarMenu internally tracks its collapsed state.
-  // We read it via a tiny context-style prop (optional) – here we just reuse the
-  // same hook that SidebarMenu uses so the padding stays in sync.
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
-
-  // Forward the collapse toggle to SidebarMenu (you could also lift this state
-  // into a layout component if you prefer).
-  const handleCollapse = () => setIsCollapsed((c) => !c);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <>
-      {/* Sidebar – pass the collapse handler so the button inside it works */}
-      <SidebarMenu onCollapse={handleCollapse} isCollapsed={isCollapsed} />
+    <BrowserRouter>
+      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        {/* Sidebar */}
+        <SidebarMenu isCollapsed={isCollapsed} onCollapse={() => setIsCollapsed(!isCollapsed)} />
 
-      {/* ──────────────────────────────────────────────────────────────── */}
-      {/*  FLEXIBLE MAIN PANEL – pushes content right of the sidebar */}
-      {/* ──────────────────────────────────────────────────────────────── */}
-      <main
-        className={clsx(
-          'min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white',
-          // Desktop: shift right by sidebar width
-          isCollapsed ? 'lg:pl-20' : 'lg:pl-80',
-          // Mobile: leave room for the fixed header
-          'pt-16 lg:pt-0'
-        )}
-      >
-        <div className="container mx-auto px-6 py-12 max-w-7xl">
-          {/* ────── Hero Section ────── */}
-          <div className="mb-16">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Welcome to NexusPro
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl">
-              Experience the future of professional dashboards with our sleek,
-              dark-themed interface. Built for performance, designed for elegance.
-            </p>
+        {/* Main Content */}
+        <main
+          className={clsx(
+            'flex-1 transition-all duration-300',
+            isCollapsed ? 'lg:pl-20' : 'lg:pl-80',
+            'pt-16 lg:pt-0'
+          )}
+        >
+          <div className="container mx-auto px-6 py-12 max-w-7xl">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </div>
+        </main>
+      </div>
 
-          {/* ────── Stats Grid ────── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {[
-              { icon: TrendingUp, label: 'Revenue', value: '$2.4M', change: '+12.5%' },
-              { icon: Users, label: 'Active Users', value: '48.2K', change: '+8.3%' },
-              { icon: Package, label: 'Products', value: '1,234', change: '+23.1%' },
-              { icon: Settings, label: 'Services', value: '89', change: '+5.7%' },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 group hover:bg-white/10 transition-all duration-300"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <stat.icon className="w-8 h-8 text-blue-400" />
-                    <span className="text-sm font-medium text-green-400">{stat.change}</span>
-                  </div>
-                  <h3 className="text-3xl font-bold mb-1">{stat.value}</h3>
-                  <p className="text-gray-400">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* ────── Feature Cards ────── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Premium Components */}
-            <div className="rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600">
-                  <Package className="w-6 h-6 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold">Premium Components</h2>
-              </div>
-              <p className="text-gray-300 mb-6">
-                Beautifully crafted components with glassmorphism effects, gradient accents,
-                and smooth animations that elevate your application's visual appeal.
-              </p>
-              <ul className="space-y-3 text-gray-400">
-                <li className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                  Responsive design across all devices
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                  Dark mode optimized interface
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-pink-400" />
-                  Accessible and keyboard navigable
-                </li>
-              </ul>
-            </div>
-
-            {/* Production Ready */}
-            <div className="rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600">
-                  <Settings className="w-6 h-6 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold">Production Ready</h2>
-              </div>
-              <p className="text-gray-300 mb-6">
-                Built with performance in mind using React 18+, TypeScript,
-                Tailwind CSS, and Framer Motion for buttery-smooth interactions.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                {['TypeScript', 'Tailwind', 'Framer Motion', 'Lucide Icons'].map((tech) => (
-                  <div
-                    key={tech}
-                    className="py-3 px-4 rounded-lg bg-white/5 border border-white/10 text-center text-sm font-medium"
-                  >
-                    {tech}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-xl border-b border-white/10">
+        <div className="flex items-center justify-between p-4">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            NexusPro
+          </h1>
         </div>
-      </main>
-    </>
+      </div>
+    </BrowserRouter>
   );
 }
 
