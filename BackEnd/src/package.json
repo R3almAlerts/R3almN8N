@@ -1,6 +1,7 @@
 {
   "name": "workflow-tool-backend",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^22.7.4",
     "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
     "typescript": "^5.6.2",
     "ts-node": "^10.9.2",
     "nodemon": "^3.1.7"

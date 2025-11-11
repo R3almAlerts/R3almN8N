@@ -1,9 +1,10 @@
 import { useState, Suspense } from 'react';
-import { useWorkflow } from './hooks/useWorkflow';
-import NavMenu, { MenuItem } from './components/NavMenu'; // New import
+import { useWorkflow } from './hooks/useWorkflow.tsx';
+import type { MenuItem } from './types/menu.tsx'; // Type-only
+import NavMenu from './components/NavMenu.tsx'; // New import
 import { Plus, Play, Home, Settings, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
-import SearchSkeleton from './components/SearchSkeleton'; // For loading
+import SearchSkeleton from './components/SearchSkeleton.tsx'; // For loading
 
 function App() {
   const [name, setName] = useState('');
@@ -88,8 +89,8 @@ function App() {
               </h3>
               <ul className="space-y-2">
                 {workflows
-                  .filter((wf) => wf.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((wf) => (
+                  .filter((wf: any) => wf.name.toLowerCase().includes(searchQuery.toLowerCase())) // Typed later w/ Workflow
+                  .map((wf: any) => ( // Typed later w/ Workflow
                     <li key={wf.id} className="flex justify-between items-center p-2 border rounded">
                       <span>{wf.name}</span>
                       <div className="flex space-x-2">

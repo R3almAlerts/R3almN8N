@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { WorkflowExecutor } from '../engine/executor';
-import { saveWorkflow, getWorkflow } from '../models/supabase';
-import { Workflow } from '../types';
+import { WorkflowExecutor } from '../engine/executor.js';
+import { saveWorkflow, getWorkflow } from '../models/supabase.js';
+import type { Workflow } from '../types/index.js';
 
 const router = Router();
 
@@ -27,9 +27,4 @@ router.post('/:id/execute', async (req, res) => {
   }
 });
 
-export async function getWorkflowsCount(): Promise<{ total: number }> {
-  const { count, error } = await supabase.from('workflows').select('*', { count: 'exact', head: true });
-  if (error) throw error;
-  return { total: count || 0 };
-}
 export default router;

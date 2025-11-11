@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Search, User } from 'lucide-react'; // Icons
-import { MenuItem } from '../types/menu'; // See types below
-import { useNavMenu } from '../hooks/useNavMenu';
+import type { MenuItem } from '../types/menu.tsx'; // Type-only
+import { useNavMenu } from '../hooks/useNavMenu.tsx';
 
 interface NavMenuProps {
   items: MenuItem[];
@@ -63,7 +63,7 @@ const NavMenu: React.FC<NavMenuProps> = React.memo(({ items, user, onSearch, loa
                     exit={{ opacity: 0, y: -10 }}
                     className="absolute left-0 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 w-48 z-50 border border-gray-200 dark:border-gray-700"
                   >
-                    {item.children.map((child) => (
+                    {item.children.map((child: MenuItem) => (
                       <li key={child.label}>
                         <a
                           href={child.href}
@@ -157,7 +157,7 @@ const NavMenu: React.FC<NavMenuProps> = React.memo(({ items, user, onSearch, loa
                     </summary>
                     {item.children && (
                       <ul className="mt-2 ml-6 space-y-1">
-                        {item.children.map((child) => (
+                        {item.children.map((child: MenuItem) => (
                           <li key={child.label}>
                             <a
                               href={child.href}

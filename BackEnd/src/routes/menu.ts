@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getWorkflowsCount } from '../models/supabase'; // Stub: Count active workflows
+import { getWorkflowsCount } from '../models/supabase.js';
 
 const router = Router();
 

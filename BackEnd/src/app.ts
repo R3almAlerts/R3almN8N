@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import workflowRoutes from './routes/workflows';
+import type { Router } from 'express'; // Type-only for routes
+import workflowRoutes from './routes/workflows.js';
 
 dotenv.config();
 

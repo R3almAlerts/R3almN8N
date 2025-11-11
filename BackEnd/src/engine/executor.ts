@@ -1,4 +1,4 @@
-import { Workflow, WorkflowNode, ExecutionContext } from '../types';
+import type { Workflow, WorkflowNode, ExecutionContext } from '../types/index.js';
 import { Job, Queue } from 'bullmq';
 import Redis from 'ioredis';
 
@@ -38,14 +38,17 @@ export class WorkflowExecutor {
       case 'ai':
         // LangChain stub - call OpenAI later
         return { response: `AI output for ${node.data.prompt}` };
+      case 'web3':
+        // Ethers stub for ecosystem
+        return { txHash: '0xstub' };
       default:
         throw new Error(`Unknown node type: ${node.type}`);
     }
   }
 
   private static sortNodes(workflow: Workflow): WorkflowNode[] {
-    // Basic topo sort (assume linear for MVP)
-    return workflow.nodes.sort((a, b) => a.position?.y - b.position?.y || 0);
+    // Basic topo sort (assume linear for MVP); default y=0 if undefined
+    return workflow.nodes.sort((a, b) => (a.position?.y ?? 0) - (b.position?.y ?? 0));
   }
 
   private static async handleError(node: WorkflowNode, context: ExecutionContext): Promise<void> {
