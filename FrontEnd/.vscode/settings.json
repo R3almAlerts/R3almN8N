@@ -4,3 +4,12 @@
   "emmet.includeLanguages": { "typescript": "html" },
   "terminal.integrated.defaultProfile.osx": "zsh"
 }
+
+{
+  "json.validate.enable": true,
+  "editor.formatOnSave": true,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.encoding": "utf8"
+}
