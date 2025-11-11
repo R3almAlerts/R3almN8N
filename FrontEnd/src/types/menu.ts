@@ -3,6 +3,6 @@ import type { LucideProps } from 'lucide-react'; // Type-only for props (strips 
 export interface MenuItem {
   label: string;
   href?: string;
-  icon?: (props: LucideProps) => JSX.Element; // Typed as icon component fn (e.g., Home from lucide-react)
+  icon?: React.ComponentType<LucideProps>; // Typed as icon component (e.g., Home from lucide-react)
   children?: MenuItem[];
 }
