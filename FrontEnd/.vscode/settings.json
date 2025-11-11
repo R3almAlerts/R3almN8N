@@ -1,0 +1,6 @@
+{
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.formatOnSave": true,
+  "emmet.includeLanguages": { "typescript": "html" },
+  "terminal.integrated.defaultProfile.osx": "zsh"
+}

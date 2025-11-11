@@ -1,0 +1,37 @@
+{
+  "name": "r3almn8n",
+  "version": "1.0.0",
+  "description": "[![GitHub Repo stars](https://img.shields.io/github/stars/R3almN8N/R3almN8N?style=social)](https://github.com/R3almN8N/R3almN8N) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Node.js](https://img.shields.io/badge/Node.js-v20-green.svg)](https://nodejs.org/) [![React](https://img.shields.io/badge/React-v18-blue.svg)](https://reactjs.org/) [![Vite](https://img.shields.io/badge/Vite-v5-orange.svg)](https://vitejs.dev/) [![Web3](https://img.shields.io/badge/Web3-Ecosystem-purple.svg)](https://web3.org/)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/R3almN8N/R3almN8N.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/R3almN8N/R3almN8N/issues"
+  },
+  "homepage": "https://github.com/R3almN8N/R3almN8N#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.81.0",
+    "bullmq": "^5.63.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
