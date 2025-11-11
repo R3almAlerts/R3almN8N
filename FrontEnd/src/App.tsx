@@ -1,5 +1,5 @@
 import { useState, Suspense } from 'react';
-import useWorkflow from './hooks/useWorkflow'; // Default import (no { })
+import useWorkflow from './hooks/useWorkflow';
 import type { MenuItem } from './types/menu';
 import NavMenu from './components/NavMenu';
 import { Plus, Play, Home, Settings, FileText, Workflow as EditorIcon } from 'lucide-react';
@@ -13,8 +13,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'creator' | 'editor'>('creator');
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
-  const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow(); // Default usage
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow();
+  const [selectedId, setSelectedId] = useState<string | null>(null); // Retained for future use (e.g., run button disable)
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
