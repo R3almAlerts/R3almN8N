@@ -14,29 +14,31 @@ function App() {
   const [activeTab, setActiveTab] = useState<'creator' | 'editor'>('creator');
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const { workflows, loading, createWorkflow, executeWorkflow } = useWorkflow();
-  const [selectedId, setSelectedId] = useState<string | null>(null); // Used in disable logic (e.g., run button)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
   const handleCreate = async () => {
-    if (name) {
-      const newWf = await createWorkflow(name);
-      setSelectedWorkflow(newWf);
-      setActiveTab('editor');
-      setName('');
+    if (name.trim()) {
+      const newWf = await createWorkflow(name.trim());
+      if (newWf) {
+        setSelectedWorkflow(newWf);
+        setSelectedId(newWf.id);
+        setActiveTab('editor');
+        setName('');
+      }
     }
   };
 
   const handleSelectForEdit = (wf: Workflow) => {
     setSelectedWorkflow(wf);
-    setActiveTab('editor');
     setSelectedId(wf.id);
+    setActiveTab('editor');
   };
 
   const handleSaveFromEditor = (updated: Workflow) => {
-    console.log('Saved updated workflow:', updated);
     setSelectedWorkflow(updated);
   };
 
@@ -62,10 +64,14 @@ function App() {
   const user = { name: 'Dev User', avatar: undefined };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8 font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <NavMenu items={menuItems} user={user} onSearch={handleSearch} loading={loading} />
       <Suspense fallback={<SearchSkeleton />}>
-        <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto mt-8">
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-7xl mx-auto p-8"
+        >
           {activeTab === 'creator' ? (
             <>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -74,37 +80,46 @@ function App() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Workflow Name"
-                  className="w-full p-2 border rounded mb-4 dark:bg-gray-700 dark:text-white"
+                  placeholder="Enter workflow name..."
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md mb-4 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
                   onClick={handleCreate}
-                  disabled={loading || !name}
-                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                  disabled={loading || !name.trim()}
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
                 >
                   <Plus size={20} />
                   <span>Create & Edit</span>
                 </button>
               </div>
+
               {workflows.length > 0 && (
                 <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                  <h3 className="text-lg font-semibold mb-4">Workflows</h3>
-                  <ul className="space-y-2">
+                  <h3 className="text-lg font-semibold mb-4">Your Workflows</h3>
+                  <ul className="space-y-3">
                     {workflows
-                      .filter((wf: Workflow) => wf.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                      .map((wf: Workflow) => (
-                        <li key={wf.id} className="flex justify-between items-center p-2 border rounded">
-                          <span>{wf.name}</span>
+                      .filter((wf) =>
+                        wf.name.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map((wf) => (
+                        <li
+                          key={wf.id}
+                          className="flex justify-between items-center p-3 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                        >
+                          <span className="font-medium">{wf.name}</span>
                           <div className="flex space-x-2">
-                            <button onClick={() => handleSelectForEdit(wf)} className="text-blue-600 hover:underline">
+                            <button
+                              onClick={() => handleSelectForEdit(wf)}
+                              className="text-blue-600 hover:underline text-sm"
+                            >
                               Edit
                             </button>
                             <button
-                              onClick={() => executeWorkflow(wf.id, { sample: 'input' })}
-                              disabled={!selectedId || selectedId !== wf.id || loading} // Use selectedId
-                              className="flex items-center space-x-1 text-green-600 hover:underline disabled:opacity-50"
+                              onClick={() => executeWorkflow(wf.id, { sample: 'test' })}
+                              disabled={loading}
+                              className="flex items-center space-x-1 text-green-600 hover:underline text-sm disabled:opacity-50"
                             >
-                              <Play size={16} />
+                              <Play size={14} />
                               <span>Run</span>
                             </button>
                           </div>
@@ -123,9 +138,13 @@ function App() {
               />
             )
           )}
+
           {activeTab === 'editor' && (
-            <button onClick={() => setActiveTab('creator')} className="mt-4 text-blue-600 hover:underline">
-              Back to Creator
+            <button
+              onClick={() => setActiveTab('creator')}
+              className="mt-6 text-blue-600 hover:underline"
+            >
+              ← Back to Creator
             </button>
           )}
         </motion.main>

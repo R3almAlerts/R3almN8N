@@ -16,55 +16,63 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
   const { isOpen, toggleMenu, closeMenu } = useNavMenu();
   const navRef = useRef<HTMLElement>(null);
 
-  // Outside click detection
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
         closeMenu();
       }
     };
-    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, closeMenu]);
 
-  // Keyboard nav focus
+  // Focus first link on mobile open
   useEffect(() => {
     if (isOpen && navRef.current) {
-      (navRef.current.querySelector('a') as HTMLElement)?.focus();
+      const firstLink = navRef.current.querySelector('a');
+      (firstLink as HTMLElement)?.focus();
     }
   }, [isOpen]);
 
   return (
-    <nav ref={navRef} role="navigation" aria-label="Main navigation" className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700">
-      {/* Desktop Horizontal Mega Menu */}
-      <div className="hidden md:flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
+    <nav
+      ref={navRef}
+      role="navigation"
+      aria-label="Main navigation"
+      className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50"
+    >
+      {/* Desktop: Horizontal Mega Menu */}
+      <div className="hidden md:flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
         <div className="flex items-center space-x-8">
           {items.map((item) => (
-            <div key={item.label} className="relative">
+            <div key={item.label} className="relative group">
               <button
-                className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                onClick={() => { /* Toggle sub state if needed */ }}
-                aria-haspopup="true"
+                className="flex items-center space-x-1.5 text-gray-700 dark:text-gray-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1 transition"
+                aria-haspopup={!!item.children}
                 aria-expanded={false}
               >
-                {item.icon ? React.createElement(item.icon, { size: 20 } as LucideProps) : null}
-                <span>{item.label}</span>
-                {item.children && <ChevronDown className="ml-1 h-4 w-4" />}
+                {item.icon && <item.icon size={20} />}
+                <span className="font-medium">{item.label}</span>
+                {item.children && <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />}
               </button>
+
               <AnimatePresence>
                 {item.children && (
                   <motion.ul
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute left-0 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 w-48 z-50 border border-gray-200 dark:border-gray-700"
+                    exit={{ opacity: 0, y: -8 }}
+                    className="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50"
                   >
                     {item.children.map((child) => (
                       <li key={child.label}>
                         <a
                           href={child.href}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                           onClick={closeMenu}
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-blue-500"
                         >
                           {child.label}
                         </a>
@@ -76,37 +84,51 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
             </div>
           ))}
         </div>
+
         <div className="flex items-center space-x-4">
+          {/* Search */}
           <div className="relative">
-            <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search workflows..."
-              className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => onSearch?.(e.target.value)}
               disabled={loading}
+              className="pl-10 pr-4 py-2 w-64 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            {loading && <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />}
+            {loading && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            )}
           </div>
+
+          {/* User Avatar */}
           {user && (
-            <div className="relative">
-              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+            <div className="relative group">
+              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1">
                 {user.avatar ? (
                   <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
                 ) : (
                   <User size={20} />
                 )}
-                <span className="hidden sm:inline">{user.name}</span>
+                <span className="hidden lg:inline font-medium">{user.name}</span>
               </button>
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 w-48 z-50 border border-gray-200 dark:border-gray-700"
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50"
               >
-                <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <a
+                  href="/profile"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   Profile
                 </a>
-                <a href="/logout" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <a
+                  href="/logout"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   Logout
                 </a>
               </motion.div>
@@ -115,53 +137,67 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
         </div>
       </div>
 
-      {/* Mobile Hamburger Menu */}
+      {/* Mobile: Hamburger + Search + User */}
       <div className="md:hidden flex items-center justify-between px-4 py-3">
-        <button onClick={toggleMenu} className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button
+          onClick={toggleMenu}
+          className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Toggle menu"
+        >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        <div className="flex-1 mx-4 relative">
+
+        <div className="flex-1 mx-3 relative">
           <input
             type="text"
             placeholder="Search..."
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => onSearch?.(e.target.value)}
             disabled={loading}
+            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {loading && <div className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />}
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          {loading && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          )}
         </div>
+
         {user && (
-          <div className="flex items-center space-x-2">
-            {user.avatar ? <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" /> : <User size={20} />}
+          <div className="flex items-center">
+            {user.avatar ? (
+              <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+            ) : (
+              <User size={20} />
+            )}
           </div>
         )}
       </div>
 
-      {/* Mobile Slide-Down Menu */}
+      {/* Mobile: Slide-Down Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden"
+            className="md:hidden overflow-hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
           >
-            <ul className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <ul>
               {items.map((item) => (
                 <li key={item.label} className="border-b border-gray-100 dark:border-gray-700">
-                  <details className="p-4">
-                    <summary className="flex items-center space-x-2 cursor-pointer text-gray-700 dark:text-gray-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      {item.icon ? React.createElement(item.icon, { size: 20 } as LucideProps) : null}
-                      <span>{item.label}</span>
+                  <details className="group">
+                    <summary className="flex items-center space-x-2 p-4 cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700">
+                      {item.icon && <item.icon size={20} />}
+                      <span className="font-medium">{item.label}</span>
+                      {item.children && <ChevronDown size={16} className="ml-auto transition-transform group-open:rotate-180" />}
                     </summary>
                     {item.children && (
-                      <ul className="mt-2 ml-6 space-y-1">
+                      <ul className="ml-10 space-y-1 pb-2">
                         {item.children.map((child) => (
                           <li key={child.label}>
                             <a
                               href={child.href}
-                              className="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               onClick={closeMenu}
+                              className="block py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 focus:outline-none focus:text-blue-600"
                             >
                               {child.label}
                             </a>
@@ -177,7 +213,4 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, user, onSearch, loading = fals
         )}
       </AnimatePresence>
     </nav>
-  );
-};
-
-export default NavMenu;
+ 
