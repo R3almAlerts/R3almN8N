@@ -1,8 +1,9 @@
 // src/pages/Signup.tsx
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase'; // ← CORRECT IMPORT
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,17 +34,18 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      const { error } = await window.supabase.auth.signUp({
+      // Use imported supabase (from lib/supabase.ts)
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: window.location.origin,
         },
       });
-      if (error) throw error;
 
-      // Auto-login after signup
-      const { login } = useAuth();
+      if (signUpError) throw signUpError;
+
+      // Auto-login after successful signup
       await login(email, password);
       navigate('/');
     } catch (err: any) {
