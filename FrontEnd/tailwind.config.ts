@@ -11,6 +11,9 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         border: 'hsl(var(--border))',
+        muted: 'hsl(var(--muted))', // Add for skeletons/hovers
+        mutedForeground: 'hsl(var(--muted-foreground))',
+        destructive: 'hsl(var(--destructive))', // For logout red
         // custom accent palette
         primary: {
           400: '#60A5FA',
@@ -30,7 +33,8 @@ module.exports = {
         xs: '2px'
       },
       animation: {
-        float: 'float 6s ease-in-out infinite'
+        float: 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' // Optional for extended loadings
       },
       keyframes: {
         float: {
