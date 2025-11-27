@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
+import Signup from './pages/Signup';   // ← ADD THIS LINE
 import NotFound from './pages/NotFound';
 import clsx from 'clsx';
 
